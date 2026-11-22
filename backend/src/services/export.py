@@ -25,6 +25,26 @@ def write_export(report_id, snapshot, fingerprint, result):
             writer.writerow([snapshot['method'], fingerprint, plan['id'], plan['min_pairs'], plan['gap_limit']])
             writer.writerow(METRICS)
             writer.writerow([result[key] for key in METRICS])
+
+            inference = result.get('inference')
+            writer.writerow([])
+            writer.writerow(['missing_inference'])
+            if inference:
+                writer.writerow(['status', inference['status']])
+                writer.writerow(['rule_min_seconds', inference['rule_min']])
+                writer.writerow(['rule_max_seconds', inference['rule_max']])
+                writer.writerow(['round1_total_seconds', inference['totals'].get('1')])
+                writer.writerow(['round2_total_seconds', inference['totals'].get('2')])
+                writer.writerow(['missing_cells', *inference['missing_cells']])
+                if inference['status'] == 'feasible':
+                    writer.writerow(['treatment_min_seconds', inference['treatment_min']])
+                    writer.writerow(['treatment_max_seconds', inference['treatment_max']])
+                    writer.writerow(['fill_for_min', *(f"{item['code']}={item['seconds']}" for item in inference['fills']['min'])])
+                    writer.writerow(['fill_for_max', *(f"{item['code']}={item['seconds']}" for item in inference['fills']['max'])])
+                for reason in inference['reasons']:
+                    writer.writerow(['infeasible_reason', reason])
+
+            writer.writerow([])
             writer.writerow(['sequence', 'enrolled', 'complete', 'period1_seconds', 'period2_seconds', 'change_seconds'])
             for sequence, group in result['groups'].items():
                 writer.writerow([sequence, *(group[key] for key in ('enrolled', 'complete', 'period1', 'period2', 'change'))])

@@ -1,12 +1,13 @@
 import { api } from '../api/client.js';
 import { empty, heading } from '../components/common/shell.js';
 import { sign } from '../components/common/signs.js';
+import { constraintsPanel } from '../components/common/constraints.js';
 import { bindForm, notice } from '../hooks/forms.js';
 import { go } from '../router/hash.js';
 import { isComplete } from '../types/field.js';
 import { e, sec } from '../utils/format.js';
 
-export function runsPage(root, { route, pairs, plans, user, refresh }) {
+export function runsPage(root, { route, pairs, plans, constraints, user, refresh }) {
   if (!route) { root.innerHTML = empty('暂无路线', '需要先准备现场路线与试走记录。'); return; }
   const edit = user.role === 'analyst';
   if (user.role === 'viewer') { root.innerHTML = empty('运行由分析员负责', '可前往实验报告查看已发布结果。', '<a href="#reports">实验报告 →</a>'); return; }
@@ -43,6 +44,9 @@ export function runsPage(root, { route, pairs, plans, user, refresh }) {
     };
     select.onchange = show;
     show();
+  }
+  if (constraints) {
+    constraintsPanel(root, { route, constraints, user, refresh });
   }
   bindForm('plan-form', async values => {
     await api.createPlan({ route_code: route.code, edition: values.edition, min_pairs: Number(values.min_pairs), gap_limit: values.gap_limit });

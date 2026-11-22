@@ -39,6 +39,15 @@ def seed():
             'INSERT INTO analysis_plan (route_code, edition, min_pairs, gap_limit, created_by) '
             "VALUES (%s,'现场初核',3,8,'analyst') ON CONFLICT (route_code, edition) DO NOTHING", (ROUTE[0],),
         )
+        # 缺测推演的现场约束：默认单人用时范围与系统录入口径一致；总用时留给现场补录。
+        cursor.execute(
+            'INSERT INTO timing_rule (route_code, min_seconds, max_seconds, updated_by) '
+            "VALUES (%s, 0.01, 900, 'analyst') ON CONFLICT (route_code) DO NOTHING", (ROUTE[0],),
+        )
+        cursor.execute(
+            'INSERT INTO constraint_ledger (route_code, generation) VALUES (%s, 0) '
+            'ON CONFLICT (route_code) DO NOTHING', (ROUTE[0],),
+        )
         keys = {
             'users': [row['username'] for row in db.execute('SELECT username FROM app_user ORDER BY username')],
             'routes': [row['code'] for row in db.execute('SELECT code FROM field_route ORDER BY code')],

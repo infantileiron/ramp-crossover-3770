@@ -1,5 +1,6 @@
 import { api } from '../api/client.js';
 import { comparison, diagnostics } from '../components/common/comparison.js';
+import { inferencePanel, staleBanner } from '../components/common/inference.js';
 import { empty, heading } from '../components/common/shell.js';
 import { decisions, states } from '../constants/domain.js';
 import { bindForm, notice } from '../hooks/forms.js';
@@ -12,6 +13,11 @@ function reviewSection(report, user) {
   }
   if (user.role !== 'reviewer') {
     return `<section class="panel review-panel"><div class="panel-title"><h2>标牌更换建议</h2><p>等待业务复核员查看完整配对和诊断后发布现场建议。</p></div></section>`;
+  }
+  if (report.stale) {
+    return `<section class="panel review-panel has-alert"><div class="panel-title"><h2>标牌更换建议</h2>
+      <p>本结论冻结于旧约束代际，现场用时规则或总用时已更新，发布已被锁定。请回到对照运行，基于新台账重新提交。</p></div>
+      <a class="button secondary" href="#runs">重新运行 →</a></section>`;
   }
   return `<section class="panel review-panel"><div class="panel-title"><h2>标牌更换建议</h2><p>结合样本量、顺序差与现场记录，选择下一步。</p></div>
     <form id="review-form"><label>复核决定<select name="decision">${report.result.decisions.map(key => `<option value="${key}">${decisions[key]}</option>`).join('')}</select></label>
@@ -36,12 +42,14 @@ export function detailPage(root, { report, user, refresh }) {
     return;
   }
   root.innerHTML = `${heading(title, detail, `<div class="actions">${back}<button id="export" class="primary">下载 CSV ↓</button></div>`)}
+    ${staleBanner(report)}
     <div class="report-bar"><span class="status ${state === 'published' ? 'ok' : 'neutral'}">${states[state]}</span>
       <span>${result.complete} 人完整配对 · 每序列门槛 ${plan.min_pairs} 对 · ${time(report.finished_at)} 完成</span>
       ${result.blocked ? '<span class="status warn">估计受阻</span>' : ''}</div>
     <dl class="metrics">${metric('处理差估计 · B − A', result.treatment, '序列等权，负值表示 B 用时较短。', 'treatment')}
       ${metric('时期差估计 · 第 2 轮 − 第 1 轮', result.period, '序列等权，含路线熟悉等共同影响。')}
       ${metric('总体变化 · 第 2 轮 − 第 1 轮', result.raw_change, '实际样本人数加权的描述值。')}</dl>
+    ${inferencePanel(result, plan)}
     <div class="report-grid">${comparison(result)}${diagnostics(result, plan)}</div>
     <p class="report-boundary">估计依赖时期影响可相加、无实质差异性延续等假设。此报告用于安排复测或局部试挂。</p>
     ${reviewSection(report, user)}

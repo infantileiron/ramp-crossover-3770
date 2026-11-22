@@ -22,7 +22,8 @@ async function load(page, id) {
   const [route] = await api.routes();
   if (!route) return { route: null };
   const [pairs, plans] = await Promise.all([api.pairs(route.code), page === 'runs' ? api.plans(route.code) : []]);
-  return { route, pairs, plans };
+  const constraints = page === 'runs' ? await api.constraints(route.code) : null;
+  return { route, pairs, plans, constraints };
 }
 
 async function render(refresh = false) {

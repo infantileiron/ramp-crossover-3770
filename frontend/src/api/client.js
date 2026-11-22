@@ -37,4 +37,8 @@ export const api = {
   report: id => request(`/reports/${id}`),
   export: id => request(`/reports/${id}/export`, 'GET', undefined, true),
   publish: (id, body) => request(`/reports/${id}/publish`, 'POST', body),
+  constraints: route => request(`/routes/${route}/constraints`),
+  saveTimingRule: (route, body) => request(`/routes/${route}/timing-rule`, 'PUT', body),
+  saveRoundTotal: (route, period, body) => request(`/routes/${route}/round-totals/${period}`, 'PUT', body),
+  deleteRoundTotal: (route, period) => request(`/routes/${route}/round-totals/${period}`, 'DELETE'),
 };

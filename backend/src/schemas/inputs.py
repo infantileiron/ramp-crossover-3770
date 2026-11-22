@@ -38,6 +38,21 @@ class PlanInput(Input):
     gap_limit: Annotated[Decimal, Field(gt=0, le=120, decimal_places=2)]
 
 
+class TimingRuleInput(Input):
+    min_seconds: Seconds
+    max_seconds: Seconds
+
+    @model_validator(mode='after')
+    def rule_ordered(self):
+        if self.min_seconds > self.max_seconds:
+            raise ValueError('用时规则下限不能高于上限')
+        return self
+
+
+class RoundTotalInput(Input):
+    total_seconds: Annotated[Decimal, Field(gt=0, le=12000, decimal_places=2)]
+
+
 class RunInput(Input):
     plan_id: int = Field(gt=0, le=2147483647)
 

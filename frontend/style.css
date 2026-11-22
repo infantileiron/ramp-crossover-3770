@@ -181,6 +181,39 @@ thead th { font-weight: 600; border-top: 1px solid var(--line); }
 .empty p { margin: 5px 0 14px; }
 .loading { color: var(--muted); padding: 18px 0; }
 
+/* 现场约束（用时规则与每轮总用时） */
+.constraint-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 18px; }
+.constraint-form { padding: 0 22px 18px; }
+.constraint-readonly { padding: 0 22px 16px; }
+.constraint-readonly div { border-top: 1px solid var(--line); padding: 9px 0; font-size: var(--sm); }
+.constraint-readonly dt { font-weight: 700; }
+.constraint-readonly dd { color: var(--muted); margin-top: 2px; }
+.total-list { list-style: none; padding: 0 22px 16px; margin: 0; }
+.total-list li { border-top: 1px solid var(--line); padding: 10px 0; display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
+.total-list small, .total-list span { color: var(--muted); font-variant-numeric: tabular-nums; }
+.total-form { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.total-form input { width: 170px; padding: 6px 8px; }
+.text-button.danger { color: var(--rust); }
+.generation-note { grid-column: 1 / -1; color: var(--muted); font-size: var(--sm); border-top: 1px solid var(--line); padding-top: 12px; }
+
+/* 缺测推演 */
+.inference { margin-bottom: 17px; }
+.inference.all-negative { border-top: 3px solid var(--green); }
+.inference.crosses-zero, .inference.has-alert { border-top: 3px solid var(--gold); }
+.bounds { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 22px 6px; }
+.bounds > div { background: var(--paper); border-left: 3px solid var(--blue); padding: 12px 14px; }
+.bounds > div:last-child { border-color: var(--gold); }
+.bounds dt { color: var(--muted); font-size: var(--sm); }
+.bounds .metric-value { font: 700 1.9rem/1.2 var(--display); font-variant-numeric: tabular-nums; }
+.bounds-verdict { padding: 8px 22px 4px; display: flex; flex-wrap: wrap; align-items: center; gap: 9px; }
+.fill-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 8px 22px 4px; }
+.fill-col h4 { font-size: var(--sm); color: var(--muted); margin-bottom: 5px; }
+.fill-col table { width: 100%; }
+.fill-sign { color: var(--muted); font-size: .75rem; margin-top: 4px; }
+.stale-banner { background: var(--gold-soft); color: var(--rust); border: 1px solid var(--gold); padding: 11px 16px; margin-bottom: 14px; font-size: var(--sm); font-weight: 600; }
+.review-panel.has-alert { border-top: 3px solid var(--gold); }
+.review-panel .button { margin: 4px 22px 20px; }
+
 .report-id { color: var(--blue); font: 700 .83em/1 var(--display); letter-spacing: .035em; vertical-align: .035em; }
 .report-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; margin: -7px 0 13px; color: var(--muted); font-size: var(--sm); }
 .metrics { display: grid; grid-template-columns: 1.15fr 1fr 1fr; margin-bottom: 17px; border: 1px solid var(--line); background: var(--panel); }
@@ -236,6 +269,7 @@ thead th { font-weight: 600; border-top: 1px solid var(--line); }
   .edit-panel { order: -1; }
   .overview-grid { grid-template-columns: 1fr; }
   .metric { padding-inline: 10px; }
+  .constraint-grid, .bounds, .fill-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 767px) {
   .login-layout { grid-template-columns: 1fr; }
